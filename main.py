@@ -3,7 +3,7 @@ from src.utils import load_json_file, save_json_file, is_duplicate
 
 
 class Vacancy:
-    """Класс для представления вакансии."""
+    """Класс для представления вакансии"""
 
     def __init__(self, name, salary):
         self.name = name
@@ -14,11 +14,11 @@ class Vacancy:
 
 
 class HeadHunterAPI:
-    """Класс для взаимодействия с API HeadHunter."""
+    """Класс для взаимодействия с API HeadHunter"""
 
     @staticmethod
     def get_vacancies(search_query):
-        """Получает список вакансий по заданному запросу."""
+        """Получает список вакансий по заданному запросу"""
         url = f'https://api.hh.ru/vacancies?text={search_query}'
         response = requests.get(url)
         if response.status_code == 200:
@@ -31,7 +31,7 @@ class HeadHunterAPI:
 
 
 def user_interface():
-    """Интерфейс взаимодействия с пользователем."""
+    """Интерфейс взаимодействия с пользователем"""
     filename = "data.json"
 
     while True:
@@ -60,14 +60,14 @@ def user_interface():
                 save_json_file(filename, existing_data)
                 print("Вакансия добавлена.")
             else:
-                print("Вакансия с таким заголовком уже существует.")
+                print("Вакансия с таким заголовком уже существует")
 
         elif choice == '3':
             title = input("Введите заголовок вакансии для удаления: ")
             existing_data = load_json_file(filename)
             updated_data = [item for item in existing_data if item['title'] != title]
             save_json_file(filename, updated_data)
-            print("Вакансия удалена, если она существовала.")
+            print("Вакансия удалена, если она существовала")
 
         elif choice == '4':
             print("Выход...")
