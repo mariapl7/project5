@@ -7,6 +7,7 @@ from src.utils import load_json_file, save_json_file, is_duplicate
 class HeadHunterAPI:
     @staticmethod
     def get_vacancies(search_query):
+        """Получает список вакансий по заданному запросу."""
         url = f'https://api.hh.ru/vacancies?text={search_query}'
         response = requests.get(url)
         if response.status_code == 200:
@@ -16,6 +17,7 @@ class HeadHunterAPI:
 
 
 def user_interface():
+    """Главный интерфейс пользователя для взаимодействия с API HeadHunter."""
     filename = "data.json"
     hh_api = HeadHunterAPI()
 
@@ -55,7 +57,7 @@ def user_interface():
 class TestHeadHunterAPI(unittest.TestCase):
     @patch('requests.get')
     def test_get_vacancies_success(self, mock_get):
-        # Подготовка мока для успешного ответа от API
+        """Тестирование успешного получения вакансий из API."""
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = {
             'items': [{'name': 'Python Developer', 'salary': 120000, 'alternate_url': 'http://example.com'}]
@@ -71,7 +73,7 @@ class TestHeadHunterAPI(unittest.TestCase):
 
     @patch('requests.get')
     def test_get_vacancies_failure(self, mock_get):
-        # Подготовка мока для ошибки API
+        """Тестирование обработки ошибки при получении вакансий из API."""
         mock_get.return_value.status_code = 404
 
         api = HeadHunterAPI()
@@ -85,7 +87,7 @@ class TestUserInterface(unittest.TestCase):
     @patch('builtins.input', side_effect=['1', '4'])  # Имитация ввода для показа вакансий, затем выхода
     @patch('requests.get')
     def test_user_interface_show_vacancies(self, mock_get, mock_input):
-        # Подготовка мока для успешного ответа от API
+        """Тестирование интерфейса пользователя при показе вакансий."""
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = {
             'items': [{'name': 'Python Developer', 'salary': 120000, 'alternate_url': 'http://example.com'}]

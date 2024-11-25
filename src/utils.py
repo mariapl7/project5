@@ -3,7 +3,7 @@ from typing import List, Dict
 
 
 def load_json_file(filename: str) -> List[Dict]:
-    """Загружает данные из JSON-файла. Если файл не найден, возвращает пустой список."""
+    """Загружает данные из JSON-файла."""
     try:
         with open(filename, 'r', encoding='utf-8') as f:
             return json.load(f)

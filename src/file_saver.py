@@ -5,22 +5,27 @@ import json
 class AbstractFileHandler(ABC):
     @abstractmethod
     def load_data(self):
+        """Загружает данные из файла."""
         pass
 
     @abstractmethod
     def save_data(self, data):
+        """Сохраняет данные в файл."""
         pass
 
     @abstractmethod
     def delete_data(self, title):
+        """Удаляет данные из файла по заголовку."""
         pass
 
 
 class JSONFileHandler(AbstractFileHandler):
     def __init__(self, filename="data.json"):
+        """Инициализация обработчика JSON-файлов."""
         self._filename = filename
 
     def load_data(self):
+        """Загружает данные из JSON-файла."""
         try:
             with open(self._filename, 'r', encoding='utf-8') as f:
                 return json.load(f)
@@ -28,6 +33,7 @@ class JSONFileHandler(AbstractFileHandler):
             return []
 
     def save_data(self, data):
+        """Сохраняет данные в JSON-файл, проверяя на дубликаты."""
         existing_data = self.load_data()
         titles = {item['title'] for item in existing_data}  # Множество заголовков
         for item in data:
@@ -38,6 +44,7 @@ class JSONFileHandler(AbstractFileHandler):
             json.dump(existing_data, f, ensure_ascii=False, indent=4)
 
     def delete_data(self, title):
+        """Удаляет данные из JSON-файла по заголовку."""
         data = self.load_data()
         data = [item for item in data if item['title'] != title]  # Удаление по заголовку
         with open(self._filename, 'w', encoding='utf-8') as f:

@@ -3,8 +3,11 @@ from src.utils import load_json_file, save_json_file, is_duplicate
 
 
 class HeadHunterAPI:
+    """Класс для взаимодействия с API HeadHunter."""
+
     @staticmethod
     def get_vacancies(search_query):
+        """Получает список вакансий по заданному запросу."""
         url = f'https://api.hh.ru/vacancies?text={search_query}'
         response = requests.get(url)
         if response.status_code == 200:
@@ -15,7 +18,11 @@ class HeadHunterAPI:
 
 
 def user_interface():
-    """Интерфейс взаимодействия с пользователем."""
+    """Интерфейс взаимодействия с пользователем.
+
+    Позволяет пользователю выполнять различные действия, связанные с вакансиями,
+    такие как просмотр, добавление и удаление вакансий.
+    """
     filename = "data.json"
     hh_api = HeadHunterAPI()
 
@@ -32,7 +39,8 @@ def user_interface():
             vacancies = hh_api.get_vacancies("Python")
             print("Список вакансий:")
             for v in vacancies:
-                print(f"- {v['name']}: {v['salary']} р. (Ссылка: {v['alternate_url']})")
+                salary = v['salary'] if v['salary'] else "Не указана"
+                print(f"- {v['name']}: {salary} (Ссылка: {v['alternate_url']})")
 
         elif choice == '2':
             title = input("Введите заголовок вакансии: ")
@@ -50,8 +58,8 @@ def user_interface():
         elif choice == '3':
             title = input("Введите заголовок вакансии для удаления: ")
             existing_data = load_json_file(filename)
-            existing_data = [item for item in existing_data if item['title'] != title]
-            save_json_file(filename, existing_data)
+            updated_data = [item for item in existing_data if item['title'] != title]
+            save_json_file(filename, updated_data)
             print("Вакансия удалена, если она существовала.")
 
         elif choice == '4':
