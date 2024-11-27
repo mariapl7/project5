@@ -2,13 +2,29 @@ import requests
 from src.utils import load_json_file, save_json_file, is_duplicate
 
 
+class Vacancy:
+    """Класс для представления вакансии."""
+
+    def __init__(self, name, salary):
+        self.name = name
+        self.salary = salary
+
+    def __str__(self):
+        return f"{self.name}: {self.salary if self.salary else 'Не указана'}"
+
+
 class HeadHunterAPI:
+    """Класс для взаимодействия с API HeadHunter."""
+
     @staticmethod
     def get_vacancies(search_query):
+        """Получает список вакансий по заданному запросу."""
         url = f'https://api.hh.ru/vacancies?text={search_query}'
         response = requests.get(url)
         if response.status_code == 200:
-            return response.json()['items']  # Вернем список вакансий
+            vacancies_data = response.json()['items']
+            # Создаем экземпляры класса Vacancy
+            return [Vacancy(v['name'], v.get('salary')) for v in vacancies_data]
         else:
             print(f"Ошибка при получении вакансий: {response.status_code}")
             return []
@@ -17,7 +33,6 @@ class HeadHunterAPI:
 def user_interface():
     """Интерфейс взаимодействия с пользователем."""
     filename = "data.json"
-    hh_api = HeadHunterAPI()
 
     while True:
         print("\nВыберите действие:")
@@ -28,20 +43,20 @@ def user_interface():
         choice = input("Введите номер действия: ")
 
         if choice == '1':
-            # Получаем вакансии с API
+            hh_api = HeadHunterAPI()
             vacancies = hh_api.get_vacancies("Python")
             print("Список вакансий:")
-            for v in vacancies:
-                print(f"- {v['name']}: {v['salary']} р. (Ссылка: {v['alternate_url']})")
+            for vacancy in vacancies:
+                print(f"- {vacancy}")
 
         elif choice == '2':
             title = input("Введите заголовок вакансии: ")
             salary = input("Введите зарплату: ")
-            new_vacancy = {"title": title, "salary": salary}
+            new_vacancy = Vacancy(title, salary)
 
             existing_data = load_json_file(filename)
             if not is_duplicate(existing_data, title):
-                existing_data.append(new_vacancy)
+                existing_data.append({"title": new_vacancy.name, "salary": new_vacancy.salary})
                 save_json_file(filename, existing_data)
                 print("Вакансия добавлена.")
             else:
@@ -50,8 +65,8 @@ def user_interface():
         elif choice == '3':
             title = input("Введите заголовок вакансии для удаления: ")
             existing_data = load_json_file(filename)
-            existing_data = [item for item in existing_data if item['title'] != title]
-            save_json_file(filename, existing_data)
+            updated_data = [item for item in existing_data if item['title'] != title]
+            save_json_file(filename, updated_data)
             print("Вакансия удалена, если она существовала.")
 
         elif choice == '4':

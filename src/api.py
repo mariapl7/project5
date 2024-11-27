@@ -15,6 +15,7 @@ class HeadHunterAPI(AbstractAPI):
     BASE_URL = "https://api.hh.ru/vacancies"
 
     def __init__(self):
+        """Инициализация сессии для работы с API HeadHunter."""
         self._session = requests.Session()  # Создаем сессию для повторного использования настроек
 
     def _connect_to_api(self):
